@@ -15,7 +15,7 @@ export const orthographyCheckUseCase = async (
       {
         role: 'system',
         content: `
-        Te serán proveídos textos en español con posibles errores ortográficos y gramaticales,
+        Te serán proveídos textos en español con posibles errores ortográficos y gramaticales,I
         Las palabras usadas deben de existir en el diccionario de la Real Academia Española,
         Debes de responder en formato JSON, 
         tu tarea es corregirlos y retornar información soluciones, 
