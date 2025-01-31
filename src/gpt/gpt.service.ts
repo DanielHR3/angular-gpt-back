@@ -1,27 +1,33 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable } from '@nestjs/common';
+
 import OpenAI from 'openai';
 
-import { orthographyCheckUseCase } from './use-cases';
-import { OrthographyDto } from './dtos';
+import {
+  orthographyCheckUseCase,
+  prosConsDicusserStreamUseCase,
+  prosConsDicusserUseCase,
+} from './use-cases';
+import { OrthographyDto, ProsConsDiscusserDto } from './dtos';
 
 @Injectable()
 export class GptService {
-  private openai: OpenAI;
+  private openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
 
-  constructor(private readonly configService: ConfigService) {
-    const apiKey = this.configService.get<string>('OPENAI_API_KEY');
-
-    if (!apiKey) {
-      throw new InternalServerErrorException('Falta la clave API de OpenAI.');
-    }
-
-    this.openai = new OpenAI({ apiKey });
-  }
+  // Solo va a llamar casos de uso
 
   async orthographyCheck(orthographyDto: OrthographyDto) {
     return await orthographyCheckUseCase(this.openai, {
       prompt: orthographyDto.prompt,
     });
+  }
+
+  async prosConsDicusser({ prompt }: ProsConsDiscusserDto) {
+    return await prosConsDicusserUseCase(this.openai, { prompt });
+  }
+
+  async prosConsDicusserStream({ prompt }: ProsConsDiscusserDto) {
+    return await prosConsDicusserStreamUseCase(this.openai, { prompt });
   }
 }
